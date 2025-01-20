@@ -17,6 +17,9 @@ const timerSound = document.getElementById('timerSound');
 const workTimeInput = document.getElementById('workTime');
 const breakTimeInput = document.getElementById('breakTime');
 const saveSettingsButton = document.getElementById('saveSettings');
+const modeModal = document.getElementById('modeModal');
+const modalWork = document.getElementById('modalWork');
+const modalBreak = document.getElementById('modalBreak');
 
 // Settings
 let workTime = 25;
@@ -54,19 +57,37 @@ function updateHistoryDisplay() {
 
 function startTimer() {
     if (timerId === null) {
-        const initialTime = timeLeft;
-        timerId = setInterval(() => {
-            timeLeft--;
-            updateDisplay();
-            if (timeLeft === 0) {
-                clearInterval(timerId);
-                timerId = null;
-                timerSound.play();
-                addToHistory(initialTime, isWorkMode ? 'Work' : 'Break');
-                resetTimer();
-            }
-        }, 1000);
+        modeModal.style.display = 'flex';
     }
+}
+
+function startTimerWithMode(isWork) {
+    modeModal.style.display = 'none';
+    isWorkMode = isWork;
+    
+    if (isWork) {
+        workLed.style.backgroundColor = 'var(--primary-color)';
+        document.querySelector('.mode-indicator span').textContent = 'WORK MODE';
+        timeLeft = workTime * 60;
+    } else {
+        workLed.style.backgroundColor = 'var(--accent-color)';
+        document.querySelector('.mode-indicator span').textContent = 'BREAK MODE';
+        timeLeft = breakTime * 60;
+    }
+    
+    updateDisplay();
+    const initialTime = timeLeft;
+    timerId = setInterval(() => {
+        timeLeft--;
+        updateDisplay();
+        if (timeLeft === 0) {
+            clearInterval(timerId);
+            timerId = null;
+            timerSound.play();
+            addToHistory(initialTime, isWork ? 'Work' : 'Break');
+            resetTimer();
+        }
+    }, 1000);
 }
 
 function pauseTimer() {
@@ -119,6 +140,13 @@ updateDisplay();
 startButton.addEventListener('click', startTimer);
 pauseButton.addEventListener('click', pauseTimer);
 resetButton.addEventListener('click', resetTimer);
-workButton.addEventListener('click', setWorkMode);
-breakButton.addEventListener('click', setBreakMode);
+modalWork.addEventListener('click', () => startTimerWithMode(true));
+modalBreak.addEventListener('click', () => startTimerWithMode(false));
 saveSettingsButton.addEventListener('click', saveSettings);
+
+// Add this event listener to close modal when clicking outside
+window.addEventListener('click', (event) => {
+    if (event.target === modeModal) {
+        modeModal.style.display = 'none';
+    }
+});
