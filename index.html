@@ -3,26 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Retro-styled Pomodoro Timer">
-    <title>Pomodoro Timer</title>
-    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+    <title>Modern Pomodoro Timer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <audio id="timerSound" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg"></audio>
 </head>
 <body>
-    <div class="container">
-        <h1>Pomodoro Timer</h1>
-        <div class="timer">
-            <span id="minutes">25</span>:<span id="seconds">00</span>
+    <div class="main-container">
+        <div class="timer-container">
+            <div class="screen-effect">
+                <h1>Pomodoro Timer</h1>
+                
+                <div class="mode-indicator">
+                    <div id="work-led" class="led"></div>
+                    <span>WORK MODE</span>
+                </div>
+
+                <div class="odometer-container">
+                    <div class="odometer minutes"></div>
+                    <div class="separator">:</div>
+                    <div class="odometer seconds"></div>
+                </div>
+
+                <div class="time-settings">
+                    <h3>Timer Settings</h3>
+                    <div class="time-input-group">
+                        <div class="input-wrapper">
+                            <label for="workTime">Work Time (min)</label>
+                            <input type="number" id="workTime" class="time-input" placeholder="Work (min)" value="25">
+                        </div>
+                        <div class="input-wrapper">
+                            <label for="breakTime">Break Time (min)</label>
+                            <input type="number" id="breakTime" class="time-input" placeholder="Break (min)" value="5">
+                        </div>
+                        <button id="saveSettings">Save Settings</button>
+                    </div>
+                </div>
+
+                <div class="button-container">
+                    <div class="controls">
+                        <button id="start">Start</button>
+                        <button id="pause">Pause</button>
+                        <button id="reset">Reset</button>
+                    </div>
+                    
+                    <div class="mode">
+                        <button id="work">Work Mode</button>
+                        <button id="break">Break Mode</button>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="controls">
-            <button id="start">Start</button>
-            <button id="pause">Pause</button>
-            <button id="reset">Reset</button>
-        </div>
-        <div class="mode">
-            <button id="work">Work</button>
-            <button id="break">Break</button>
+
+        <div class="history-sidebar">
+            <h2>Session History</h2>
+            <div class="history-list"></div>
         </div>
     </div>
     <script src="script.js"></script>

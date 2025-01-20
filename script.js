@@ -14,24 +14,20 @@ const resetButton = document.getElementById('reset');
 const workButton = document.getElementById('work');
 const breakButton = document.getElementById('break');
 const timerSound = document.getElementById('timerSound');
-const progressRing = document.querySelector('.progress-ring-circle');
-const progressBar = document.querySelector('.progress-bar-fill');
 const workTimeInput = document.getElementById('workTime');
 const breakTimeInput = document.getElementById('breakTime');
 const saveSettingsButton = document.getElementById('saveSettings');
-let initialTime;
 
-// Constants
-const DEFAULT_WORK_TIME = 50;
-const DEFAULT_BREAK_TIME = 0.1;
+// Settings
+let workTime = 25;
+let breakTime = 5;
 
 function updateDisplay() {
     const minutes = Math.floor(timeLeft / 60);
     const seconds = timeLeft % 60;
     
-    // Clear previous content
-    minutesDisplay.innerHTML = `<span>${minutes.toString().padStart(2, '0')}</span>`;
-    secondsDisplay.innerHTML = `<span>${seconds.toString().padStart(2, '0')}</span>`;
+    minutesDisplay.innerHTML = `${minutes.toString().padStart(2, '0')}`;
+    secondsDisplay.innerHTML = `${seconds.toString().padStart(2, '0')}`;
 }
 
 function addToHistory(duration, type) {
@@ -49,9 +45,8 @@ function updateHistoryDisplay() {
     historyList.innerHTML = sessionHistory
         .map(item => `
             <div class="history-item">
-                <span>${item.timestamp}</span>
-                <span>${item.type}</span>
-                <span>${Math.floor(item.duration / 60)}:${(item.duration % 60).toString().padStart(2, '0')}</span>
+                <div class="history-time">${item.timestamp}</div>
+                <div class="history-type">${item.type} - ${Math.floor(item.duration / 60)}:${(item.duration % 60).toString().padStart(2, '0')}</div>
             </div>
         `)
         .join('');
@@ -68,7 +63,6 @@ function startTimer() {
                 timerId = null;
                 timerSound.play();
                 addToHistory(initialTime, isWorkMode ? 'Work' : 'Break');
-                alert(isWorkMode ? 'Work time is over! Take a break!' : 'Break is over! Back to work!');
                 resetTimer();
             }
         }, 1000);
@@ -83,10 +77,8 @@ function pauseTimer() {
 function resetTimer() {
     clearInterval(timerId);
     timerId = null;
-    timeLeft = isWorkMode ? DEFAULT_WORK_TIME * 60 : DEFAULT_BREAK_TIME * 60;
-    initialTime = timeLeft;
+    timeLeft = isWorkMode ? workTime * 60 : breakTime * 60;
     updateDisplay();
-    updateProgress();
 }
 
 function setWorkMode() {
@@ -98,7 +90,7 @@ function setWorkMode() {
 
 function setBreakMode() {
     isWorkMode = false;
-    workLed.style.backgroundColor = '#ff0000';
+    workLed.style.backgroundColor = 'var(--accent-color)';
     document.querySelector('.mode-indicator span').textContent = 'BREAK MODE';
     resetTimer();
 }
@@ -108,11 +100,10 @@ function saveSettings() {
     const newBreakTime = parseInt(breakTimeInput.value);
     
     if (newWorkTime && newBreakTime) {
-        DEFAULT_WORK_TIME = newWorkTime;
-        DEFAULT_BREAK_TIME = newBreakTime;
+        workTime = newWorkTime;
+        breakTime = newBreakTime;
         resetTimer();
         
-        // Show feedback
         saveSettingsButton.textContent = 'Saved!';
         setTimeout(() => {
             saveSettingsButton.textContent = 'Save Settings';
@@ -121,7 +112,7 @@ function saveSettings() {
 }
 
 // Initialize
-timeLeft = DEFAULT_WORK_TIME * 60;
+timeLeft = workTime * 60;
 updateDisplay();
 
 // Event listeners
